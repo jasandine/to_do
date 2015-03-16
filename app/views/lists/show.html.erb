@@ -5,19 +5,39 @@
 <p><%= @list.description %></p>
 
 <% if @list.tasks.any? %>
-  <h4>Here are the tasks for this list:</h4>
+  <% if @list.tasks.not_done.any? %>
+    <h4>Here are the tasks for this list:</h4>
+    <ul>
+      <% @list.tasks.not_done.each do |task| %>
+        <li>
+          <%= task.description %> |
+          <%= link_to "Edit", edit_list_task_path(@list, task) %> |
+          <%= link_to "Delete", list_task_path(@list, task),
+                                :data => {:confirm => "REALLY?",
+                                          :method => "delete"} %> |
+          <%= link_to "Mark done", list_task_path(@list, task),
+                                :data => {:action => :mark_done,
+                                          :redirect_to => list_path(@list),
+                                          :method => "patch"} %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
 
-  <ul>
-    <% @list.tasks.each do |task| %>
+  <% if @list.tasks.done.any? %>
+    <h4>These tasks are completed:</h4>
+    <ul>
+      <% @list.tasks.done.each do |task| %>
       <li>
         <%= task.description %> |
         <%= link_to "Edit", edit_list_task_path(@list, task) %> |
         <%= link_to "Delete", list_task_path(@list, task),
                               :data => {:confirm => "REALLY?",
-                                        :method => "delete"} %>
-      </li>
-    <% end %>
-  </ul>
+                              :method => "delete"} %>
+        </li>
+        <% end %>
+      </ul>
+  <% end %>
 <% else %>
   <p>There are no tasks yet!</p>
 <% end %>
